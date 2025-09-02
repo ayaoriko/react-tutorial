@@ -1,3 +1,8 @@
+# 概要
+
+これは公式のチュートリアルを読みながら作ったものです。
+項目ごとにページが遷移する機能も実装しています。
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
