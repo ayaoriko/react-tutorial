@@ -2,8 +2,9 @@ import './App.scss';
 // ページャーの追加
 import { Routes, Route, Link } from 'react-router-dom';
 
-import Home from './pages/Home';
-import Learn from './pages/Learn';
+import QuickStart from './pages/Home';
+import TicTacToe from './pages/TicTacToe';
+import Top from './pages/Top';
 
 function App() {
   return (
@@ -11,13 +12,15 @@ function App() {
       {/* Link は「ブラウザをリロードしないリンク」 */}
       <nav style={{ padding: 20 }}>
         <Link to="/">Home</Link> |{" "}
-        <Link to="/learn">Learn</Link>
+        <Link to="/quick-start">クイックスタート</Link> |{" "}
+        <Link to="/tic-tac-toe">三目並べ</Link>
       </nav>
       {/* Routes と Route で「道と出口」を決める */}
       <main className="main">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/learn" element={<Learn />} />
+          <Route path="/" element={<Top />} />
+          <Route path="/quick-start" element={<QuickStart />} />
+          <Route path="/tic-tac-toe" element={<TicTacToe />} />
         </Routes>
       </main>
     </>

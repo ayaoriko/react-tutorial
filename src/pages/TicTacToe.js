@@ -17,17 +17,17 @@ export default function Game() {
   const currentSquares = history[currentMove];
   function handlePlay(nextSquares) {
     
-  // // ...history は [ [null,null,...], ["X",null,...] ] に展開される意味を持つ
-  // // nextSquares が["X","Y",...]の時、...history 後ろに配列を追加して、[ [null,null,...], ["X",null,...], ["X","Y",...]] という 新しい配列になる
-  // // setHistory に渡す → state が更新される
-  //  //setHistory([...history, nextSquares]);
-  
-  // 選択した番手よりも後の手順を削除する必要がある。
-  // ..history.slice(0, currentMove + 1)をすることで、番手より後のものが削除される。
-  const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
-  // 着手が起きるたびに、最新の履歴エントリを指し示すように currentMove を更新する必要があります。
-  setHistory(nextHistory);
-  setCurrentMove(nextHistory.length - 1);
+    // // ...history は [ [null,null,...], ["X",null,...] ] に展開される意味を持つ
+    // // nextSquares が["X","Y",...]の時、...history 後ろに配列を追加して、[ [null,null,...], ["X",null,...], ["X","Y",...]] という 新しい配列になる
+    // // setHistory に渡す → state が更新される
+    //  //setHistory([...history, nextSquares]);
+    
+    // 選択した番手よりも後の手順を削除する必要がある。
+    // ..history.slice(0, currentMove + 1)をすることで、番手より後のものが削除される。
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    // 着手が起きるたびに、最新の履歴エントリを指し示すように currentMove を更新する必要があります。
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
   }
 
   function jumpTo(nextMove) {
