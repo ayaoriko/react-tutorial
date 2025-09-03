@@ -1,12 +1,45 @@
 import { useState } from 'react';
 
-export default function Board() {
+export default function Game() {
+  // 現在の手番と着手の履歴を管理するための state を追加
   const [xIsNext, setXIsNext] = useState(true);
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  // 現在の盤面をレンダーするには、history の最後にあるマス目の配列を読み取る必要があります。
+  const currentSquares = history[history.length - 1];
+  
+  function handlePlay(nextSquares) {
+    // ...history は [ [null,null,...], ["X",null,...] ] に展開される意味を持つ
+    // nextSquares が["X","Y",...]の時、...history 後ろに配列を追加して、[ [null,null,...], ["X",null,...], ["X","Y",...]] という 新しい配列になる
+    // setHistory に渡す → state が更新される
+    setHistory([...history, nextSquares]);
+    setXIsNext(!xIsNext);
+  }
+
+  
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div className="game-info">
+        <ol>{/*TODO*/}</ol>
+      </div>
+    </div>
+  );
+}
+
+/** 丸バツゲームの本体 **/
+function Board({ xIsNext, squares, onPlay }) {
+ 
+ // Board の冒頭で useState を呼び出しているので、
+ // const [xIsNext, setXIsNext] とconst [squares, setSquares]は削除OK
+
+ // const [xIsNext, setXIsNext] = useState(true);
   
   // 現在の状態の値 → この場合 squares
   // 状態を更新する関数 → この場合 setSquares
   //   useState(Array(9).fill(null))で、squares の中身を [null, null, null, null, null, null, null, null, null] にする
-  const [squares, setSquares] = useState(Array(9).fill(null));
+  // const [squares, setSquares] = useState(Array(9).fill(null));
 
   const size = 3;
   
@@ -18,12 +51,17 @@ export default function Board() {
   
   // 現在の配列をコピー
    const nextSquares = squares.slice();
+   
     //  nextSquares[i] にXかOを入れる
     nextSquares[i] = xIsNext ? "X" : "O";
-    // 画面に反映
-    setSquares(nextSquares);
-    // 次のプレーヤーを設定
-    setXIsNext(!xIsNext);
+    
+    // Board の冒頭で useState を呼び出しているので、onPlay に置き換える。
+    onPlay(nextSquares);
+    
+    // // 画面に反映
+    // setSquares(nextSquares);
+    // // 次のプレーヤーを設定
+    // setXIsNext(!xIsNext);
   }
   
   const winner = calculateWinner(squares, size);
