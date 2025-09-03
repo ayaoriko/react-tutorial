@@ -1,20 +1,52 @@
 import { useState } from 'react';
 
 export default function Game() {
-  // 現在の手番と着手の履歴を管理するための state を追加
-  const [xIsNext, setXIsNext] = useState(true);
-  const [history, setHistory] = useState([Array(9).fill(null)]);
-  // 現在の盤面をレンダーするには、history の最後にあるマス目の配列を読み取る必要があります。
-  const currentSquares = history[history.length - 1];
+  // // 現在の手番と着手の履歴を管理するための state を追加
+  // // const [xIsNext, setXIsNext] = useState(true);
   
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  // Game コンポーネントに、現在ユーザが見ているのが何番目の着手であるのかを管理させる
+  const [currentMove, setCurrentMove] = useState(0);
+  // // 現在の盤面をレンダーするには、history の最後にあるマス目の配列を読み取る必要があります。
+  // // const currentSquares = history[history.length - 1];
+  
+  // xIsNext を別の state 変数として保存するのではなく、currentMove に基づいて求めるように変更
+  const xIsNext = currentMove % 2 === 0;
+  
+  // 常に最後の着手をレンダーする代わりに、現在選択されている着手をレンダーするようにします：
+  const currentSquares = history[currentMove];
   function handlePlay(nextSquares) {
-    // ...history は [ [null,null,...], ["X",null,...] ] に展開される意味を持つ
-    // nextSquares が["X","Y",...]の時、...history 後ろに配列を追加して、[ [null,null,...], ["X",null,...], ["X","Y",...]] という 新しい配列になる
-    // setHistory に渡す → state が更新される
-    setHistory([...history, nextSquares]);
-    setXIsNext(!xIsNext);
+    
+  // // ...history は [ [null,null,...], ["X",null,...] ] に展開される意味を持つ
+  // // nextSquares が["X","Y",...]の時、...history 後ろに配列を追加して、[ [null,null,...], ["X",null,...], ["X","Y",...]] という 新しい配列になる
+  // // setHistory に渡す → state が更新される
+  //  //setHistory([...history, nextSquares]);
+  
+  // 選択した番手よりも後の手順を削除する必要がある。
+  // ..history.slice(0, currentMove + 1)をすることで、番手より後のものが削除される。
+  const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+  // 着手が起きるたびに、最新の履歴エントリを指し示すように currentMove を更新する必要があります。
+  setHistory(nextHistory);
+  setCurrentMove(nextHistory.length - 1);
   }
 
+  function jumpTo(nextMove) {
+    setCurrentMove(nextMove);
+  }
+  
+  const moves = history.map((squares, move) => {
+    let description;
+    if (move > 0) {
+      description = 'Go to move #' + move;
+    } else {
+      description = 'Go to game start';
+    }
+    return (
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  });
   
   return (
     <div className="game">
@@ -22,7 +54,7 @@ export default function Game() {
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ol>{/*TODO*/}</ol>
+        <ol>{moves}</ol>
       </div>
     </div>
   );
