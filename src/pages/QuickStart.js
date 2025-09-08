@@ -2,7 +2,7 @@ import logo from './../logo.svg';
 // 画面の更新
 import { useState } from 'react';
 
-function Home() {
+function QuickStart() {
   // ログイン中かどうかを確認
   let isLoggedIn = checkLogin ()
   
@@ -56,7 +56,7 @@ function Home() {
 }
 
 // 一番最初に表示される関数を定義
-export default Home;
+export default QuickStart;
 
 // <MyButton />を定義
 // ボタンごとにそれぞれ別にカウントをする
