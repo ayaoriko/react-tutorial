@@ -17,7 +17,7 @@ function App() {
         <Link to="/quick-start">クイックスタート</Link> |{" "}
         <Link to="/tic-tac-toe">三目並べ</Link> |{" "}
         <Link to="/search-list">検索リスト</Link>|{" "}
-        <Link to="/learn-ui">UI を学ぶ</Link>
+        <Link to="/learn-ui">UI を学ぶ</Link>|{" "}
         <Link to="/learn-interactivity">インタラクティビティの追加</Link>
       </nav>
       {/* Routes と Route で「道と出口」を決める */}
