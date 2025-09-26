@@ -8,6 +8,8 @@ import TicTacToe from './pages/TicTacToe';
 import SearchList from './pages/SearchList';
 import LearnUI from './pages/LearnUI/Index';
 import LearnInteractivity from './pages/LearnInteractivity/Index';
+import ManagingState from './pages/ManagingState/Index';
+
 function App() {
   return (
     <>
@@ -18,7 +20,8 @@ function App() {
         <Link to="/tic-tac-toe">三目並べ</Link> |{" "}
         <Link to="/search-list">検索リスト</Link>|{" "}
         <Link to="/learn-ui">UI を学ぶ</Link>|{" "}
-        <Link to="/learn-interactivity">インタラクティビティの追加</Link>
+        <Link to="/learn-interactivity">インタラクティビティの追加</Link>|{" "}
+        <Link to="/managing-state">stateの管理</Link>
       </nav>
       {/* Routes と Route で「道と出口」を決める */}
       <main className="main">
@@ -29,6 +32,7 @@ function App() {
           <Route path="/search-list" element={<SearchList />} />
           <Route path="/learn-ui" element={<LearnUI />} />
           <Route path="/learn-interactivity" element={<LearnInteractivity />} />
+          <Route path="/managing-state" element={<ManagingState />} />
         </Routes>
       </main>
     </>
