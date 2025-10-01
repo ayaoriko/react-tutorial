@@ -32,9 +32,11 @@ export default function PassingDataDeeplyWithContext() {
 }
 
 function Section({ children }) {
+  // useContext(LevelContext) → 親からもらった「現在の階層の数値」を読む
   const level = useContext(LevelContext);
   return (
     <section className="section">
+        {/*<LevelContext.Provider value={level + 1}> → 子どもには「階層を1つ深めた値」を渡す */}
       <LevelContext.Provider value={level + 1}>
         {children}
       </LevelContext.Provider>
@@ -43,6 +45,7 @@ function Section({ children }) {
 }
 
 function Heading({ children }) {
+ // useContext(LevelContext) → 親からもらった「現在の階層の数値」を読む
   const level = useContext(LevelContext);
   switch (level) {
     case 1: return <h1>{children}</h1>;

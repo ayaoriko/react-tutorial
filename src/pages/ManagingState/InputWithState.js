@@ -95,7 +95,7 @@ const [answer, setAnswer] = useState('');
     {/*
     <h2>state 構造の選択</h2>
     <h3>チャレンジ問題にトライ/ 壊れた荷物リストの修正 </h3>
-            // ✅ 正しい
+        // ✅ 正しい
         items.filter(item => item.packed);
 
         // ✅ 正しい（ブロックとreturnを明示）
@@ -107,6 +107,19 @@ const [answer, setAnswer] = useState('');
         items.filter(item => {
         item.packed;
         });
+        <h3>チャレンジ問題にトライ/ 複数選択を実装 </h3>
+        if (selectedIds.includes(toggledId)) {
+            //   filter を使うことでクリックした ID は削除されることを示せる
+            setSelectedIds(selectedIds.filter(id =>
+                id !== toggledId
+            ));
+            } else {
+            // selectedIdsの配列にtoggledIdを追加する
+            setSelectedIds([
+                ...selectedIds,
+                toggledId
+            ]);
+        }
         */}
     </>
   );
@@ -125,3 +138,5 @@ function submitForm(answer) {
     }, 1500);
   });
 }
+
+
