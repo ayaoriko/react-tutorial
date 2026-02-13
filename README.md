@@ -193,6 +193,146 @@ function About() {  return ( ... ); }
 export default App;
 ```
 
+## react-transition-groupのライブラリの使い方
+要素がDOMから消える直前に、指定したクラスを一時的に付けてくれるライブラリ。
+classNames="fade"で指定した名前に-exitと-exit-activeが自動で付与される仕組みです。
+
+1.インストール
+```
+npm install react-transition-group
+```
+2. 次に、TodoList.jsxの上部にimportを追加します。
+```
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+```
+3. TodoBoxListの中でアイテムを並べている部分を、TransitionGroupとCSSTransitionで囲みます。
+timeout: アニメーションが完了するまでの時間を設定
+classNames: アニメーション用のスタイルを設定
+```
+function TodoBoxList({ todos, setTodos, categoryId, lastAddedId, lastAddedRef }) {
+    let CategoryTodos = todos.filter((todo) => todo.category === categoryId);
+    return (
+        <TransitionGroup component={null}>
+            {CategoryTodos.map(todoItem =>
+                <CSSTransition key={todoItem.id} timeout={300} classNames="fade">
+                    <TodoBoxListItem todoItem={todoItem} setTodos={setTodos} lastAddedId={lastAddedId} lastAddedRef={lastAddedRef} />
+                </CSSTransition>
+            )}
+        </TransitionGroup>
+    );
+}
+```
+classNamesでfadeを設定することで、fadeで設定したclassNameが展開されて、
+```
+classNames={{
+ enter,
+ enterActive,
+ enterDone,
+ exit,
+ exitActive,
+ exitDone,
+}}
+```
+のようにアニメーションに必要なclassNameが設定されます。
+
+4. 最後にSCSSにアニメーションを追加します。
+```
+.fade-exit {
+    opacity: 1;
+}
+.fade-exit-active {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+```
+
+### findDOMNode is not a functionのエラーについて
+
+nodeRefとは
+React 19でfindDOMNodeが廃止されたため、nodeRefを使って直接DOM要素を渡す必要がある。nodeRefを渡さないとfindDOMNode is not a functionのエラーが発生する。
+nodeRefの作り方
+App.jsで以下のように管理する。
+```
+// useRef({})で空のオブジェクトを作り、各アイテムのIDをキーにしてrefを保存する
+const todoRefs = useRef({});
+
+// refがなければ作る
+// createRef()だけで管理すると再レンダリングのたびに新しいrefが作られてしまい
+// 2回目以降アニメーションが効かなくなるため、useRef({})の中に保存して使い回す
+todos.forEach(todo => {
+    if (!todoRefs.current[todo.id]) {
+        todoRefs.current[todo.id] = createRef();
+    }
+});
+```
+
+■nodeRefの渡し方
+CSSTransitionのnodeRefとアニメーション対象の要素のrefに同じrefオブジェクトを渡す。
+```
+// todoRefs[todoItem.id]をCSSTransitionとliの両方に渡す
+<CSSTransition key={todoItem.id} timeout={300} classNames="fade" nodeRef={todoRefs[todoItem.id]}>
+    <li ref={todoRefs[todoItem.id]}>
+```
+アニメーション対象の要素に別のrefも渡したい場合（今回はlastAddedRef）は、refに1つしか渡せないためアロー関数でまとめる。
+```
+<li ref={(el) => {
+    todoRefs[todoItem.id].current = el;
+    if (todoItem.id === lastAddedId && lastAddedRef) {
+        lastAddedRef.current = el;
+    }
+}}>
+```
+
+# Supbaseについて
+
+
+## 接続の流れ
+
+事前にsupabaseでテーブルとかを作成しておく
+
+supabase.jsを作成
+※APIは.envファイルに記載。.envファイルは作成したらnpmを再起動する必要あり
+```
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseKey = process.env.REACT_APP_SUPABASE_KEY;
+
+export const supabase = createClient(supabaseUrl,supabaseKey);
+```
+
+App.jsに追記して読み込み先を指定して表示
+```
+import { supabase } from './supabase';
+```
+```
+  // supabaseからデータを取得するため、useStateの初期値を空配列に変更する
+  const [todos,setTodos] = useState([]);
+  const [categoryList,setCategoryList] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: categoryData } = await supabase.from('categories').select('*');
+      const { data: todoData } = await supabase.from('todos').select('*');
+      setCategoryList(categoryData);
+      // SupabaseはDBの慣習でスネークケース（is_check）、Reactはキャメルケース（isCheck）になっている
+       // Supabaseのカラムのスネークのからキャメルケースに変換する
+      setTodos(todoData.map(todo => ({ ...todo,isCheck: todo.is_check })));
+    };
+    fetchData();
+  },[]);
+
+```
+## 不具合が起きた場合
+・Consoleタブでエラーがないか見る
+・ネットワークタブでcategoriesやtodosへのリクエストが出ているか確認
+⇨リクエストがステータスが200になってたら接続成功
+⇨各リクエストのResponseタブでデータが返っているか見れる
+
+■レスポンスが空のとき⇨RLS（Row Level Security）の無効化にすると改善されるかもしれない
+SupabaseはデフォルトでRLSという「誰がデータを読み書きできるか」を管理するセキュリティ機能が有効になっています。
+ポリシー（ルール）を設定しないと誰もデータを読めない⇨RLS自体を無効化してログインなしでも誰でもデータを読み書きできる状態に変更
+
 # Gitについて
 
 ## Gitのコマンド
